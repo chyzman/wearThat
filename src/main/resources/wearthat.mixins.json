@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.chyzman.wearthat.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "PlayerScreenHandlerSlotMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

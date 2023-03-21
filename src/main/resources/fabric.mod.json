@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "wearthat",
+  "version": "${version}",
+  "name": "WearThat",
+  "description": "Why shouldn't you be able to wear that?",
+  "authors": ["chyzman"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/wearthat/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": ["com.chyzman.wearthat.client.WearThatClient"],
+    "main": ["com.chyzman.wearthat.WearThat"]
+  },
+  "mixins": [
+    "wearthat.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "fabric": "*",
+    "minecraft": ">=1.17"
+  }
+}
