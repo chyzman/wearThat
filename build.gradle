@@ -9,7 +9,6 @@ group = project.maven_group
 
 repositories {
     maven { url 'https://maven.wispforest.io' }
-    maven { url 'https://ladysnake.jfrog.io/artifactory/mods'}
 }
 
 dependencies {
@@ -19,13 +18,6 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_version}")
-
-    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}"){
-        exclude group: "net.fabricmc.fabric-api"
-    }
-
-    include("io.wispforest:owo-sentinel:${project.owo_version}")
 }
 
 processResources {

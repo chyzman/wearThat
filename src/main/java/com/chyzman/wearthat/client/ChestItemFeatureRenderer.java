@@ -1,25 +1,17 @@
 package com.chyzman.wearthat.client;
 
-import net.fabricmc.fabric.api.item.v1.EquipmentSlotProvider;
-import net.fabricmc.fabric.api.item.v1.FabricItem;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.feature.HeadFeatureRenderer;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.ModelWithHead;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3f;
 
 import static net.minecraft.entity.LivingEntity.getPreferredEquipmentSlot;
@@ -38,7 +30,6 @@ public class ChestItemFeatureRenderer<T extends LivingEntity, M extends EntityMo
         ModelTransformation.Mode mode = ModelTransformation.Mode.FIXED;
         ItemStack chestStack = ((LivingEntity) entity).getEquippedStack(EquipmentSlot.CHEST);
         if (!chestStack.isEmpty()) {
-            Item item = chestStack.getItem();
             if (!(getPreferredEquipmentSlot(chestStack).equals(EquipmentSlot.CHEST))) {
                 matrices.push();
                 ((PlayerEntityModel) this.getContextModel()).body.rotate(matrices);
@@ -76,7 +67,6 @@ public class ChestItemFeatureRenderer<T extends LivingEntity, M extends EntityMo
         }
         ItemStack legsStack = ((LivingEntity) entity).getEquippedStack(EquipmentSlot.LEGS);
         if (!legsStack.isEmpty()) {
-            Item item = legsStack.getItem();
             if (!(getPreferredEquipmentSlot(legsStack).equals(EquipmentSlot.LEGS))) {
                 matrices.push();
                 ((PlayerEntityModel) this.getContextModel()).rightLeg.rotate(matrices);
@@ -104,7 +94,6 @@ public class ChestItemFeatureRenderer<T extends LivingEntity, M extends EntityMo
         }
         ItemStack feetStack = ((LivingEntity) entity).getEquippedStack(EquipmentSlot.FEET);
         if (!feetStack.isEmpty()) {
-            Item item = feetStack.getItem();
             if (!(getPreferredEquipmentSlot(feetStack).equals(EquipmentSlot.FEET))) {
                 matrices.push();
                 ((PlayerEntityModel) this.getContextModel()).rightLeg.rotate(matrices);
