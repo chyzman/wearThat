@@ -15,9 +15,10 @@
   "mixins": [
     "wearthat.mixins.json"
   ],
+  "accessWidener": "wearthat.accesswidener",
   "depends": {
     "fabricloader": "*",
     "fabric": "*",
-    "minecraft": ">=1.19"
+    "minecraft": ">=1.21"
   }
 }
