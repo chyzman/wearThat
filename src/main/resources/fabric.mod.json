@@ -4,21 +4,28 @@
   "version": "${version}",
   "name": "WearThat",
   "description": "Why shouldn't you be able to wear that?",
-  "authors": ["chyzman"],
+  "authors": [
+    "chyzman"
+  ],
   "contact": {},
-  "license": "All Rights Reserved",
+
+  "license": "LGPL-3.0",
   "icon": "assets/wearthat/icon.png",
+
   "environment": "*",
   "entrypoints": {
     "client": ["com.chyzman.wearthat.client.WearThatClient"]
   },
+
   "mixins": [
     "wearthat.mixins.json"
   ],
+
   "accessWidener": "wearthat.accesswidener",
+
   "depends": {
+    "minecraft": ">=1.21",
     "fabricloader": "*",
-    "fabric": "*",
-    "minecraft": ">=1.21"
+    "fabric": "*"
   }
 }

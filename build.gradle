@@ -1,9 +1,9 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version '1.11+'
     id 'maven-publish'
 }
 
-version = project.mod_version
+version = project.mod_version + "+" + project.minecraft_base_version
 group = project.maven_group
 
 repositories {
@@ -16,7 +16,6 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
 }
 
 processResources {
@@ -54,14 +53,4 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-
-    repositories {}
 }
