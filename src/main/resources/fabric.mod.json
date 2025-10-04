@@ -13,9 +13,6 @@
   "icon": "assets/wearthat/icon.png",
 
   "environment": "*",
-  "entrypoints": {
-    "client": ["com.chyzman.wearthat.client.WearThatClient"]
-  },
 
   "mixins": [
     "wearthat.mixins.json"

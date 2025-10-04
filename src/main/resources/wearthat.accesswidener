@@ -1,2 +1,4 @@
 accessWidener   v2  named
 accessible class net/minecraft/screen/slot/ArmorSlot
+accessible field net/minecraft/client/render/entity/feature/FeatureRenderer context Lnet/minecraft/client/render/entity/feature/FeatureRendererContext;
+accessible method net/minecraft/client/render/entity/feature/ArmorFeatureRenderer renderArmor (Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V
