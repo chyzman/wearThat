@@ -1,6 +1,6 @@
 package com.chyzman.wearthat.mixin;
 
-import com.chyzman.wearthat.WearThat;
+import com.chyzman.wearthat.ThatUtil;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -14,7 +14,6 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
@@ -38,7 +37,6 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
     );
 
     @Unique private ArmorFeatureRenderer<PlayerEntityRenderState, PlayerEntityModel, PlayerEntityModel> armorFeatureRenderer;
-    @Unique private PlayerEntityModel outerModel;
 
     public PlayerEntityRendererMixin(
         EntityRendererFactory.Context ctx,
@@ -81,19 +79,19 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
         Operation<Void> original,
         @Local(argsOnly = true) VertexConsumerProvider vertexConsumers
     ) {
-        original.call(instance, matrices, vertices, light, overlay);
-        if (this.armorFeatureRenderer == null) return;
         var client = MinecraftClient.getInstance();
-        var tickDelta = client.getRenderTickCounter().getTickDelta(true);
         var player = client.player;
         if (player == null) return;
+        if (!client.player.isInvisible()) original.call(instance, matrices, vertices, light, overlay);
+        if (this.armorFeatureRenderer == null) return;
+        var tickDelta = client.getRenderTickCounter().getTickDelta(true);
         var chestStack = player.getEquippedStack(CHEST);
         if (!chestStack.isEmpty()) {
-            WearThat.renderingArm = instance == this.model.leftArm ? Arm.LEFT : Arm.RIGHT;
+            ThatUtil.renderingArm = instance == this.model.leftArm ? Arm.LEFT : Arm.RIGHT;
             var renderState = this.createRenderState();
             this.updateRenderState(player, renderState, tickDelta);
             armorFeatureRenderer.render(matrices, vertexConsumers, light, renderState, renderState.yawDegrees, renderState.pitch);
-            WearThat.renderingArm = null;
+            ThatUtil.renderingArm = null;
         }
     }
 }
