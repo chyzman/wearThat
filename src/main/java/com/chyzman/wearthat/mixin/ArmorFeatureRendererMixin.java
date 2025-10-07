@@ -10,7 +10,6 @@ import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -22,9 +21,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.EquippableComponent;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +39,8 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
     @Shadow
     protected abstract A getModel(S state, EquipmentSlot slot);
 
-    @Shadow protected abstract void setVisible(A bipedModel, EquipmentSlot slot);
+    @Shadow
+    protected abstract void setVisible(A bipedModel, EquipmentSlot slot);
 
     @Unique
     @Nullable
@@ -91,7 +89,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         var returned = original.call(stack, componentType);
         var modelIsEmpty = false;
         if (this.renderState == null) return returned;
-        if(returned instanceof EquippableComponent component) {
+        if (returned instanceof EquippableComponent component) {
             armorModelRef.set((BipedEntityModel<BipedEntityRenderState>) getModel(this.renderState, component.slot()));
             modelIsEmpty = component.assetId().isEmpty();
         }
@@ -100,52 +98,51 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
             setVisible((A) armorModel, slot);
             var contextModel = this.getContextModel();
             matrices.push();
-            contextModel.getRootPart().rotate(matrices);
-            //@formatter:off
+            contextModel.getRootPart().applyTransform(matrices);
             switch (slot) {
                 case CHEST -> {
                     var state = ((LivingEntityRenderStateDuck) this.renderState).wearThat$getChestItemRenderState();
                     //torso
                     if (armorModel.body.visible) {
                         matrices.push();
-                        contextModel.body.rotate(matrices);
+                        contextModel.body.applyTransform(matrices);
                         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                         matrices.translate(0, -1 / 4f, 0);
                         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                        state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.scale(1.01f, 1.01f, 1.01f);
                         matrices.translate(0, -1 / 4f, 0);
-                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                        state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.pop();
                     }
 
                     //right arm
                     if (armorModel.rightArm.visible) {
                         matrices.push();
-                        contextModel.rightArm.rotate(matrices);
+                        contextModel.rightArm.applyTransform(matrices);
                         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                         matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                         matrices.translate(-1 / 12f, 0, 0);
                         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                        state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.scale(0.99f, 0.99f, 0.99f);
                         matrices.translate(0, -1 / 2f, 0);
-                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                        state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.pop();
                     }
 
                     //left arm
                     if (armorModel.leftArm.visible) {
                         matrices.push();
-                        contextModel.leftArm.rotate(matrices);
+                        contextModel.leftArm.applyTransform(matrices);
                         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                         matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                         matrices.translate(1 / 12f, 0, 0);
                         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                        state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.scale(0.99f, 0.99f, 0.99f);
                         matrices.translate(0, -1 / 2f, 0);
-                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                        state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.pop();
                     }
                 }
@@ -154,71 +151,70 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                     var state = ((LivingEntityRenderStateDuck) this.renderState).wearThat$getLegsItemRenderState();
                     //right leg
                     matrices.push();
-                    contextModel.rightLeg.rotate(matrices);
+                    contextModel.rightLeg.applyTransform(matrices);
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                     matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                     matrices.translate(0, -1 / 6f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                    state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.scale(1.01f, 1.01f, 1.01f);
                     matrices.translate(0, -1 / 3f, 0);
-                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                    state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
 
                     //left leg
                     matrices.push();
-                    contextModel.leftLeg.rotate(matrices);
+                    contextModel.leftLeg.applyTransform(matrices);
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                     matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                     matrices.translate(0, -1 / 6f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                    state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.scale(1.01f, 1.01f, 1.01f);
                     matrices.translate(0, -1 / 3f, 0);
-                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                    state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
                 }
                 case FEET -> {
                     var state = ((LivingEntityRenderStateDuck) this.renderState).wearThat$getFeetItemRenderState();
                     //right foot
                     matrices.push();
-                    contextModel.rightLeg.rotate(matrices);
+                    contextModel.rightLeg.applyTransform(matrices);
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                     matrices.scale(0.75f, 0.75f, 0.75f);
                     matrices.translate(0, -0.8f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                    state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
 
                     //left foot
                     matrices.push();
-                    contextModel.leftLeg.rotate(matrices);
+                    contextModel.leftLeg.applyTransform(matrices);
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                     matrices.scale(0.75f, 0.75f, 0.75f);
                     matrices.translate(0, -0.8f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+                    state.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
                 }
             }
-            //@formatter:on
             matrices.pop();
         }
         return returned;
     }
 
     @ModifyExpressionValue(
-        method = "hasModel(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/EquipmentSlot;)Z",
+        method = "hasModel(Lnet/minecraft/component/type/EquippableComponent;Lnet/minecraft/entity/EquipmentSlot;)Z",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;hasModel(Lnet/minecraft/component/type/EquippableComponent;Lnet/minecraft/entity/EquipmentSlot;)Z"
+            target = "Lnet/minecraft/component/type/EquippableComponent;slot()Lnet/minecraft/entity/EquipmentSlot;"
         )
     )
-    private static boolean allArmorHasModels(
-        boolean original,
-        @Local(argsOnly = true) ItemStack stack
+    private static EquipmentSlot allArmorHasModels(
+        EquipmentSlot original,
+        @Local(argsOnly = true) EquipmentSlot slot
     ) {
-        return original || stack.getItem() instanceof ArmorItem;
+        return slot;
     }
 
     @WrapOperation(
@@ -304,18 +300,18 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                 armorModel.getRootPart().copyTransform(contextModel.getHead());
                 switch (slot) {
                     case CHEST -> {
-                        armorModel.body.translate(new Vector3f(0, -20, 0));
-                        armorModel.rightArm.translate(new Vector3f(-1, -20, 0));
+                        armorModel.body.moveOrigin(new Vector3f(0, -20, 0));
+                        armorModel.rightArm.moveOrigin(new Vector3f(-1, -20, 0));
                         armorModel.rightArm.scale(new Vector3f(0.001f, 0.001f, 0.001f));
-                        armorModel.leftArm.translate(new Vector3f(1, -20, 0));
+                        armorModel.leftArm.moveOrigin(new Vector3f(1, -20, 0));
                         armorModel.leftArm.scale(new Vector3f(0.001f, 0.001f, 0.001f));
                     }
                     case LEGS -> {
                         armorModel.getRootPart().rotate(RotationAxis.POSITIVE_Z.rotationDegrees(180));
                     }
                     case FEET -> {
-                        armorModel.rightLeg.translate(new Vector3f(-1, -32, 0));
-                        armorModel.leftLeg.translate(new Vector3f(1, -32, 0));
+                        armorModel.rightLeg.moveOrigin(new Vector3f(-1, -32, 0));
+                        armorModel.leftLeg.moveOrigin(new Vector3f(1, -32, 0));
                     }
                 }
             }
@@ -339,11 +335,11 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
 
                         //right leg
                         armorModel.rightLeg.copyTransform(contextModel.rightArm);
-                        armorModel.rightLeg.translate(new Vector3f(-1f, 0.1f, 0));
+                        armorModel.rightLeg.moveOrigin(new Vector3f(-1f, 0.1f, 0));
 
                         //left leg
                         armorModel.leftLeg.copyTransform(contextModel.leftArm);
-                        armorModel.leftLeg.translate(new Vector3f(1f, 0.1f, 0));
+                        armorModel.leftLeg.moveOrigin(new Vector3f(1f, 0.1f, 0));
                     }
                     case FEET -> {
                         //right boot
