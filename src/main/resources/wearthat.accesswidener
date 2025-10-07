@@ -1,3 +1,2 @@
 accessWidener   v2  named
 accessible class net/minecraft/screen/slot/ArmorSlot
-accessible field net/minecraft/client/render/entity/feature/FeatureRenderer context Lnet/minecraft/client/render/entity/feature/FeatureRendererContext;

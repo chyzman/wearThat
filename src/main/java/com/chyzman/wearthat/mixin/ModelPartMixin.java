@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 @Mixin(ModelPart.class)
 public abstract class ModelPartMixin implements ModelPartDuck {
     @Unique
-    public Consumer<MatrixStack> transform = null;
+    private Consumer<MatrixStack> transform = null;
 
     @Override
     public void wearThat$setTransform(Consumer<MatrixStack> consumer) {
@@ -39,6 +39,5 @@ public abstract class ModelPartMixin implements ModelPartDuck {
             this.transform.accept(matrices);
             matrices.scale(16, 16, 16);
         }
-        this.transform = null;
     }
 }

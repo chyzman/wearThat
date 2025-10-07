@@ -6,7 +6,7 @@
   "mixins": [
     "ArmorSlotMixin"
   ],
-  "client": ["ArmorFeatureRendererMixin", "HeldItemRendererMixin", "ModelPartMixin", "PlayerEntityRendererMixin"],
+  "client": ["ArmorFeatureRendererMixin", "ModelPartMixin"],
   "injectors": {
     "defaultRequire": 1
   }
