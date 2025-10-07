@@ -1,5 +1,6 @@
 package com.chyzman.wearthat.mixin;
 
+import com.chyzman.wearthat.pond.LivingEntityRenderStateDuck;
 import com.chyzman.wearthat.pond.ModelPartDuck;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
@@ -89,22 +90,21 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
     ) {
         var returned = original.call(stack, componentType);
         var modelIsEmpty = false;
+        if (this.renderState == null) return returned;
         if(returned instanceof EquippableComponent component) {
-            if (this.renderState != null) armorModelRef.set((BipedEntityModel<BipedEntityRenderState>) getModel(this.renderState, component.slot()));
-            modelIsEmpty = component.model().isEmpty();
+            armorModelRef.set((BipedEntityModel<BipedEntityRenderState>) getModel(this.renderState, component.slot()));
+            modelIsEmpty = component.assetId().isEmpty();
         }
         if (returned == null || modelIsEmpty) {
             var armorModel = armorModelRef.get();
             setVisible((A) armorModel, slot);
-            var itemRenderer = MinecraftClient.getInstance().getItemRenderer();
-            var mode = ModelTransformationMode.FIXED;
-            var model = itemRenderer.getModel(stack, null, null, 0);
             var contextModel = this.getContextModel();
             matrices.push();
             contextModel.getRootPart().rotate(matrices);
             //@formatter:off
             switch (slot) {
                 case CHEST -> {
+                    var state = ((LivingEntityRenderStateDuck) this.renderState).wearThat$getChestItemRenderState();
                     //torso
                     if (armorModel.body.visible) {
                         matrices.push();
@@ -112,10 +112,10 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                         matrices.translate(0, -1 / 4f, 0);
                         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                        itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.scale(1.01f, 1.01f, 1.01f);
                         matrices.translate(0, -1 / 4f, 0);
-                        itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.pop();
                     }
 
@@ -127,10 +127,10 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                         matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                         matrices.translate(-1 / 12f, 0, 0);
                         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                        itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.scale(0.99f, 0.99f, 0.99f);
                         matrices.translate(0, -1 / 2f, 0);
-                        itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.pop();
                     }
 
@@ -142,15 +142,16 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                         matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                         matrices.translate(1 / 12f, 0, 0);
                         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                        itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.scale(0.99f, 0.99f, 0.99f);
                         matrices.translate(0, -1 / 2f, 0);
-                        itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                        state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                         matrices.pop();
                     }
                 }
 
                 case LEGS -> {
+                    var state = ((LivingEntityRenderStateDuck) this.renderState).wearThat$getLegsItemRenderState();
                     //right leg
                     matrices.push();
                     contextModel.rightLeg.rotate(matrices);
@@ -158,10 +159,10 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                     matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                     matrices.translate(0, -1 / 6f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.scale(1.01f, 1.01f, 1.01f);
                     matrices.translate(0, -1 / 3f, 0);
-                    itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
 
                     //left leg
@@ -171,13 +172,14 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                     matrices.scale(2 / 3f, 2 / 3f, 2 / 3f);
                     matrices.translate(0, -1 / 6f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.scale(1.01f, 1.01f, 1.01f);
                     matrices.translate(0, -1 / 3f, 0);
-                    itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
                 }
                 case FEET -> {
+                    var state = ((LivingEntityRenderStateDuck) this.renderState).wearThat$getFeetItemRenderState();
                     //right foot
                     matrices.push();
                     contextModel.rightLeg.rotate(matrices);
@@ -185,7 +187,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                     matrices.scale(0.75f, 0.75f, 0.75f);
                     matrices.translate(0, -0.8f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
 
                     //left foot
@@ -195,7 +197,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                     matrices.scale(0.75f, 0.75f, 0.75f);
                     matrices.translate(0, -0.8f, 0);
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-                    itemRenderer.renderItem(stack, mode, true, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+                    state.render(matrices,vertexConsumers, light, OverlayTexture.DEFAULT_UV);
                     matrices.pop();
                 }
             }
@@ -223,15 +225,15 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         method = "renderArmor",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/component/type/EquippableComponent;model()Ljava/util/Optional;"
+            target = "Lnet/minecraft/component/type/EquippableComponent;assetId()Ljava/util/Optional;"
         )
     )
-    private static Optional<Identifier> dontExplodeWhenGrabbingModel(
+    private static Optional<Identifier> dontExplodeWhenGrabbingAssetId(
         EquippableComponent instance,
         Operation<Optional<Identifier>> original,
         @Cancellable() CallbackInfo ci
     ) {
-        if (instance.model().isEmpty()) ci.cancel();
+        if (instance.assetId().isEmpty()) ci.cancel();
         return original.call(instance);
     }
 
