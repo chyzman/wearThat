@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
+import net.minecraft.client.render.entity.equipment.EquipmentRenderer;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -22,15 +23,18 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Debug;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
 
 @Debug(export = true)
-@Mixin(ArmorFeatureRenderer.class)
-public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> extends FeatureRenderer<S, M> {
+@Mixin(EquipmentRenderer.class)
+public abstract class EquipmentRendererMixin<S extends BipedEntityRenderState, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> extends FeatureRenderer<S, M> {
 
     @Shadow
     protected abstract A getModel(S state, EquipmentSlot slot);
@@ -39,7 +43,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
     @Nullable
     private S renderState;
 
-    public ArmorFeatureRendererMixin(FeatureRendererContext<S, M> context) {
+    public EquipmentRendererMixin(FeatureRendererContext<S, M> context) {
         super(context);
     }
 
