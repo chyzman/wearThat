@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -21,20 +20,14 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.EquippableComponent;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ModelTransformationMode;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Optional;
-
-@Debug(export = true)
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> extends FeatureRenderer<S, M> {
 
@@ -206,33 +199,17 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
     }
 
     @ModifyExpressionValue(
-        method = "hasModel(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/EquipmentSlot;)Z",
+        method = "hasModel(Lnet/minecraft/component/type/EquippableComponent;Lnet/minecraft/entity/EquipmentSlot;)Z",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;hasModel(Lnet/minecraft/component/type/EquippableComponent;Lnet/minecraft/entity/EquipmentSlot;)Z"
+            target = "Lnet/minecraft/component/type/EquippableComponent;slot()Lnet/minecraft/entity/EquipmentSlot;"
         )
     )
-    private static boolean allArmorHasModels(
-        boolean original,
-        @Local(argsOnly = true) ItemStack stack
+    private static EquipmentSlot allArmorHasModels(
+        EquipmentSlot original,
+        @Local(argsOnly = true) EquipmentSlot slot
     ) {
-        return original || stack.getItem() instanceof ArmorItem;
-    }
-
-    @WrapOperation(
-        method = "renderArmor",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/component/type/EquippableComponent;model()Ljava/util/Optional;"
-        )
-    )
-    private static Optional<Identifier> dontExplodeWhenGrabbingModel(
-        EquippableComponent instance,
-        Operation<Optional<Identifier>> original,
-        @Cancellable() CallbackInfo ci
-    ) {
-        if (instance.model().isEmpty()) ci.cancel();
-        return original.call(instance);
+        return slot;
     }
 
     @WrapOperation(
@@ -273,7 +250,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         var slot = slotRef.get();
         originalSlot.set(slot != component.slot() ? slot : null);
         slotRef.set(component.slot());
-        return true;
+        return original;
     }
 
     @WrapOperation(
