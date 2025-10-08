@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ArmorSlot.class)
 public abstract class ArmorSlotMixin {
 
-    @Inject(method = "canInsert", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "canInsert", at = @At("HEAD"), cancellable = true)
     public void allowItemEquipping(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(true);
     }

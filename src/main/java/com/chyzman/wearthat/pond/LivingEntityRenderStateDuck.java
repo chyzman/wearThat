@@ -9,4 +9,10 @@ public interface LivingEntityRenderStateDuck {
     ItemRenderState wearThat$getChestItemRenderState();
     ItemRenderState wearThat$getLegsItemRenderState();
     ItemRenderState wearThat$getFeetItemRenderState();
+
+    void wearThat$setEnchanted(boolean enchanted);
+    boolean wearThat$isEnchanted();
+
+    void wearThat$setColor(int color);
+    int wearThat$getColor();
 }

@@ -7,10 +7,10 @@
     "ArmorSlotMixin"
   ],
   "client": [
-    "ArmorFeatureRendererMixin",
-    "LivingEntityRendererMixin",
-    "LivingEntityRenderStateMixin",
-    "ModelPartMixin"
+    "client.ArmorFeatureRendererMixin",
+    "client.EquipmentRendererMixin",
+    "client.LivingEntityRendererMixin",
+    "client.LivingEntityRenderStateMixin", "client.PlayerEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
