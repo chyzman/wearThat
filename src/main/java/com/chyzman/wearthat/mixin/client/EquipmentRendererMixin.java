@@ -57,7 +57,7 @@ public abstract class EquipmentRendererMixin {
         if (
             !(object instanceof BipedEntityRenderState) ||
             !(model instanceof BipedEntityModel<?> armorModel) ||
-            equippableComponent == null || //TODO: this should trigger the original wearthat item on body thingy
+            equippableComponent == null ||
             entityModel == null ||
             ThatUtil.currentSlot == null ||
             equippableComponent.slot() == ThatUtil.currentSlot
