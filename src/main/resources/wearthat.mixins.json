@@ -7,10 +7,18 @@
     "ArmorSlotMixin"
   ],
   "client": [
+    "client.AbstractClientPlayerEntityMixin",
     "client.ArmorFeatureRendererMixin",
+    "client.BatchingRenderCommandQueueMixin",
+    "client.ElytraFeatureRendererMixin",
     "client.EquipmentRendererMixin",
     "client.LivingEntityRendererMixin",
-    "client.LivingEntityRenderStateMixin", "client.PlayerEntityRendererMixin"
+    "client.ModelPartCommandRendererMixin",
+    "client.ModelPartMixin",
+    "client.PlayerEntityRendererMixin",
+    "client.duck.LivingEntityRenderStateMixin",
+    "client.duck.ModelPartCommandMixin",
+    "client.duck.SkinTexturesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

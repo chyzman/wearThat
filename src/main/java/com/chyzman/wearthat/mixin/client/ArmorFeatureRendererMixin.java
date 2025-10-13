@@ -27,6 +27,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.equipment.EquipmentAsset;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.Arm;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
@@ -104,8 +105,9 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         switch (slot) {
             case CHEST -> {
                 var state = ((LivingEntityRenderStateDuck) renderState).wearThat$getChestItemRenderState();
+                var arm = ((LivingEntityRenderStateDuck) renderState).armmersive$getRenderingArm();
                 //torso
-                if (armorModel.body.visible) {
+                if (arm == null && armorModel.body.visible) {
                     matrices.push();
                     contextModel.body.applyTransform(matrices);
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
@@ -120,7 +122,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                 }
 
                 //right arm
-                if (armorModel.rightArm.visible) {
+                if (arm != Arm.LEFT && armorModel.rightArm.visible) {
                     matrices.push();
                     contextModel.rightArm.applyTransform(matrices);
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
@@ -135,7 +137,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
                 }
 
                 //left arm
-                if (armorModel.leftArm.visible) {
+                if (arm != Arm.RIGHT && armorModel.leftArm.visible) {
                     matrices.push();
                     contextModel.leftArm.applyTransform(matrices);
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
@@ -212,7 +214,6 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         return armorModel;
     }
 
-    @SuppressWarnings("unchecked")
     @WrapOperation(
         method = "renderArmor",
         at = @At(
@@ -235,10 +236,8 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         @Share("originalSlot") LocalRef<@Nullable EquipmentSlot> originalSlot
     ) {
         ThatUtil.currentSlot = originalSlot.get();
-        ThatUtil.currentBipedModel = (BipedEntityModel<BipedEntityRenderState>) this.getContextModel();
         model.resetTransforms();
         original.call(instance, layerType, assetKey, model, object, itemStack, matrixStack, orderedRenderCommandQueue, light, outlineColor);
         ThatUtil.currentSlot = null;
-        ThatUtil.currentBipedModel = null;
     }
 }
