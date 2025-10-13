@@ -289,7 +289,6 @@ public abstract class EquipmentRendererMixin {
                     original.call(instance, model, object, matrices, renderLayer, light, overlay, tintColor, sprite, outlineColor, crumblingOverlayCommand);
                 }
                 case LEGS -> {
-                    //right leg
                     matrices.push();
                     entityModel.body.applyTransform(matrices);
                     matrices.translate(0, 8 / 16f, 0);
@@ -298,7 +297,7 @@ public abstract class EquipmentRendererMixin {
                     matrices.pop();
                 }
                 case FEET -> {
-                    //right boot
+                    //right foot
                     matrices.push();
                     entityModel.rightLeg.applyTransform(matrices);
                     matrices.translate(0, 6 / 16f, 0);
@@ -306,7 +305,7 @@ public abstract class EquipmentRendererMixin {
                     original.call(instance, model, object, matrices, renderLayer, light, overlay, tintColor, sprite, outlineColor, crumblingOverlayCommand);
                     matrices.pop();
 
-                    //left boot
+                    //left foot
                     matrices.push();
                     entityModel.leftLeg.applyTransform(matrices);
                     matrices.translate(0, 6 / 16f, 0);
