@@ -1,6 +1,6 @@
 package com.chyzman.wearthat.mixin.client;
 
-import com.chyzman.wearthat.ThatUtil;
+import com.chyzman.wearthat.WearThat;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -11,13 +11,10 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.equipment.EquipmentModel;
 import net.minecraft.client.render.entity.equipment.EquipmentRenderer;
 import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
-import net.minecraft.client.render.entity.model.ElytraEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
@@ -47,7 +44,7 @@ public abstract class ElytraFeatureRendererMixin<S extends BipedEntityRenderStat
         Operation<Void> original,
         @Share("renderSlot") LocalRef<EquipmentSlot> renderSlot
     ) {
-        if (ThatUtil.currentBipedModel != null) {
+        if (WearThat.currentBipedModel != null) {
             renderSlot.set(EquipmentSlot.HEAD);
             original.call(matrixStack, orderedRenderCommandQueue, i, bipedEntityRenderState, f, g);
             renderSlot.set(EquipmentSlot.LEGS);
@@ -71,7 +68,7 @@ public abstract class ElytraFeatureRendererMixin<S extends BipedEntityRenderStat
         @Local(argsOnly = true) BipedEntityRenderState renderState,
         @Share("renderSlot") LocalRef<EquipmentSlot> renderSlot
     ) {
-        if (ThatUtil.currentBipedModel == null || renderSlot.get() == null) return original;
+        if (WearThat.currentBipedModel == null || renderSlot.get() == null) return original;
         return switch (renderSlot.get()) {
             case HEAD -> renderState.equippedHeadStack;
             case LEGS -> renderState.equippedLegsStack;
@@ -104,9 +101,9 @@ public abstract class ElytraFeatureRendererMixin<S extends BipedEntityRenderStat
         @Local(argsOnly = true) BipedEntityRenderState renderState,
         @Share("renderSlot") LocalRef<EquipmentSlot> renderSlot
     ) {
-        ThatUtil.currentSlot = renderSlot.get();
+        WearThat.currentSlot = renderSlot.get();
         original.call(instance, layerType, assetKey, model, object, itemStack, matrices, queue, light, sprite, outlineColor, i);
-        ThatUtil.currentSlot = null;
+        WearThat.currentSlot = null;
     }
 
 }

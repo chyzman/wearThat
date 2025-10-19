@@ -7,6 +7,8 @@ import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.entity.player.SkinTextures;
+import net.minecraft.util.math.ColorHelper;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -52,16 +54,29 @@ public abstract class LivingEntityRenderStateMixin implements LivingEntityRender
     }
 
     @Unique
-    private int color = -1;
+    @Nullable
+    private Integer color = -1;
 
     @Override
-    public void wearThat$setColor(int color) {
+    public void wearThat$setColor(@Nullable Integer color) {
         this.color = color;
     }
 
     @Override
-    public int wearThat$getColor() {
+    @Nullable
+    public Integer wearThat$getColor() {
         return color;
+    }
+
+    @Override
+    public void wearThat$mergeColor(int color) {
+        this.color = wearThat$applyColor(color);
+    }
+
+    @Override
+    public int wearThat$applyColor(int color) {
+        if (this.color == null) return color;
+        return ColorHelper.average(color, this.color);
     }
 
     @Unique

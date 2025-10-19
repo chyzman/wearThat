@@ -9,7 +9,7 @@ import net.minecraft.util.Arm;
 import org.jetbrains.annotations.Nullable;
 
 public interface LivingEntityRenderStateDuck {
-    // we default the method that armmersive adds so that we don't need explicit dependencies :3
+    // we default this method that armmersive adds so that we don't need explicit dependencies :3
     default @Nullable Arm armmersive$getRenderingArm() {
         return null;
     }
@@ -21,8 +21,11 @@ public interface LivingEntityRenderStateDuck {
     void wearThat$setEnchanted(boolean enchanted);
     boolean wearThat$isEnchanted();
 
-    void wearThat$setColor(int color);
-    int wearThat$getColor();
+    void wearThat$setColor(@Nullable Integer color);
+    @Nullable Integer wearThat$getColor();
+
+    void wearThat$mergeColor(int color);
+    int wearThat$applyColor(int color);
 
     void wearThat$setEmissive(boolean emissive);
     boolean wearThat$isEmissive();

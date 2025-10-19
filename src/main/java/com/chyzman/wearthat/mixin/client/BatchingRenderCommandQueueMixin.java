@@ -1,6 +1,6 @@
 package com.chyzman.wearthat.mixin.client;
 
-import com.chyzman.wearthat.ThatUtil;
+import com.chyzman.wearthat.WearThat;
 import com.chyzman.wearthat.pond.ModelPartDuck;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -30,7 +30,7 @@ public abstract class BatchingRenderCommandQueueMixin {
         OrderedRenderCommandQueueImpl.ModelPartCommand command,
         Operation<Void> original
     ) {
-        if (ThatUtil.forbidTransforming) ((ModelPartDuck) (Object) command).wearThat$setTransformingForbidden(true);
+        if (WearThat.forbidTransforming) ((ModelPartDuck) (Object) command).wearThat$setTransformingForbidden(true);
         original.call(instance, renderLayer, command);
     }
 }

@@ -7,7 +7,11 @@
   "authors": [
     "chyzman"
   ],
-  "contact": {},
+  "contact": {
+    "homepage": "https://modrinth.com/mod/wearThat",
+    "sources": "https://github.com/chyzman/wearThat",
+    "issues": "https://github.com/chyzman/wearThat/issues"
+  },
 
   "license": "LGPL-3.0",
   "icon": "assets/wearthat/icon.png",

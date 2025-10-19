@@ -1,6 +1,6 @@
 package com.chyzman.wearthat.mixin.client;
 
-import com.chyzman.wearthat.ThatUtil;
+import com.chyzman.wearthat.WearThat;
 import com.chyzman.wearthat.pond.LivingEntityRenderStateDuck;
 import com.chyzman.wearthat.pond.SkinTexturesDuck;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -30,13 +30,17 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.GlowInkSacItem;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.math.ColorHelper;
-import org.spongepowered.asm.mixin.*;
+import net.minecraft.util.math.MathHelper;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+
+import java.awt.*;
+import java.util.Objects;
 
 @Environment(EnvType.CLIENT)
 @Mixin(LivingEntityRenderer.class)
@@ -46,6 +50,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
 
     @Shadow protected M model;
 
+    @SuppressWarnings("unchecked")
     @WrapMethod(
         method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V"
     )
@@ -56,9 +61,9 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
         CameraRenderState cameraRenderState,
         Operation<Void> original
     ) {
-        if (model instanceof BipedEntityModel<?> bipedModel) ThatUtil.currentBipedModel = (BipedEntityModel<BipedEntityRenderState>) bipedModel;
+        if (model instanceof BipedEntityModel<?> bipedModel) WearThat.currentBipedModel = (BipedEntityModel<BipedEntityRenderState>) bipedModel;
         original.call(renderState, matrices, queue, cameraRenderState);
-        ThatUtil.currentBipedModel = null;
+        WearThat.currentBipedModel = null;
     }
 
     @WrapOperation(
@@ -72,7 +77,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
         OrderedRenderCommandQueue instance,
         Model<?> model,
         Object o,
-        MatrixStack matrixStack,
+        MatrixStack matrices,
         RenderLayer renderLayer,
         int light,
         int overlay,
@@ -83,15 +88,16 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
         Operation<Void> original
     ) {
         var duck = (LivingEntityRenderStateDuck) o;
+
         original.call(
             instance,
             model,
             o,
-            matrixStack,
+            matrices,
             renderLayer,
             duck.wearThat$isEmissive() ? LightmapTextureManager.MAX_LIGHT_COORDINATE : light,
             overlay,
-            tintColor != -1 ? duck.wearThat$getColor() != -1 ? ColorHelper.average(tintColor, duck.wearThat$getColor()) : tintColor : duck.wearThat$getColor(),
+            tintColor == -1 ? Objects.requireNonNullElse(duck.wearThat$getColor(), -1).intValue() : duck.wearThat$applyColor(tintColor),
             sprite,
             outlineColor,
             crumblingOverlayCommand
@@ -101,7 +107,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
                 instance,
                 model,
                 o,
-                matrixStack,
+                matrices,
                 RenderLayer.getEntityGlint(),
                 light,
                 overlay,
@@ -127,7 +133,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
         var duck = (LivingEntityRenderStateDuck) renderState;
 
         duck.wearThat$setEnchanted(false);
-        duck.wearThat$setColor(-1);
+        duck.wearThat$setColor(null);
         duck.wearThat$setEmissive(false);
 
         for (var slot : EquipmentSlot.values()) {
@@ -148,7 +154,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
 
     @Unique
     private void updateWearThatItemRenderState(LivingEntity entity, LivingEntityRenderState entityRenderState, EquipmentSlot slot, ItemRenderState itemRenderState) {
-        var stack = entity.getEquippedStack(slot);
+        ItemStack stack = entity.getEquippedStack(slot);
         if (!ArmorFeatureRenderer.hasModel(stack, slot) && shouldRenderWithWearThat(stack, (LivingEntityRenderStateDuck) entityRenderState, entity)) {
             itemModelResolver.updateForLivingEntity(itemRenderState, stack, ItemDisplayContext.FIXED, entity);
         } else {
@@ -164,12 +170,23 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
             canceled = true;
         }
         if (stack.getItem() instanceof DyeItem dyeItem) {
-            duck.wearThat$setColor(ColorHelper.average(duck.wearThat$getColor(), dyeItem.getColor().getEntityColor()));
+            duck.wearThat$mergeColor(dyeItem.getColor().getEntityColor());
             canceled = true;
         }
         if (stack.getItem() instanceof GlowInkSacItem) {
             duck.wearThat$setEmissive(true);
             canceled = true;
+        }
+        if (stack.getItem() instanceof NameTagItem && stack.getCustomName() != null) {
+            switch (stack.getCustomName().getString()) {
+                case "jeb_" -> {
+                    var multiplier = ((double) (entity.getUuid().hashCode() & 0xFFFFFFFFL) / (double) 0xFFFFFFFFL) * (25d - 15d) + 15d;
+                    var hue = ((System.currentTimeMillis()) / multiplier % 360d) / 360f;
+                    var rgb = Color.HSBtoRGB((float) hue, 1f, 1f);
+                    duck.wearThat$setColor(rgb);
+                    canceled = true;
+                }
+            }
         }
         return !canceled;
     }

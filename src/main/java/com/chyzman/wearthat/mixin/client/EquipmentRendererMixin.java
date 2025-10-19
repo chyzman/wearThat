@@ -1,6 +1,6 @@
 package com.chyzman.wearthat.mixin.client;
 
-import com.chyzman.wearthat.ThatUtil;
+import com.chyzman.wearthat.WearThat;
 import com.chyzman.wearthat.pond.LivingEntityRenderStateDuck;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -17,11 +17,11 @@ import net.minecraft.client.render.entity.equipment.EquipmentRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.ElytraEntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.equipment.EquipmentAssetKeys;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
@@ -57,23 +57,23 @@ public abstract class EquipmentRendererMixin {
         @Local(argsOnly = true) OrderedRenderCommandQueue orderedRenderCommandQueue
     ) {
         var equippableComponent = itemStack.get(DataComponentTypes.EQUIPPABLE);
-        var entityModel = ThatUtil.currentBipedModel;
+        var entityModel = WearThat.currentBipedModel;
         if (
             !(object instanceof BipedEntityRenderState) ||
             equippableComponent == null ||
             entityModel == null ||
-            ThatUtil.currentSlot == null ||
-            equippableComponent.slot() == ThatUtil.currentSlot
+            WearThat.currentSlot == null ||
+            (equippableComponent.slot() == WearThat.currentSlot && !EquipmentAssetKeys.ELYTRA.equals(equippableComponent.assetId().orElse(null)))
         ) {
             original.call(instance, model, object, matrices, renderLayer, light, overlay, tintColor, sprite, outlineColor, crumblingOverlayCommand);
             return;
         }
         var queue = orderedRenderCommandQueue.getBatchingQueue(batchIndexRef.get());
-        ThatUtil.forbidTransforming = true;
+        WearThat.forbidTransforming = true;
         matrices.push();
         entityModel.getRootPart().applyTransform(matrices);
         if (model instanceof BipedEntityModel<?> armorModel) {
-            switch (ThatUtil.currentSlot) {
+            switch (WearThat.currentSlot) {
                 case HEAD -> {
                     entityModel.head.applyTransform(matrices);
                     switch (equippableComponent.slot()) {
@@ -279,8 +279,8 @@ public abstract class EquipmentRendererMixin {
                     }
                 }
             }
-        } else if (model instanceof ElytraEntityModel elytraModel) {
-            switch (ThatUtil.currentSlot) {
+        } else if (model instanceof ElytraEntityModel) {
+            switch (WearThat.currentSlot) {
                 case HEAD -> {
                     matrices.translate(0, 0, -2/16f);
                     entityModel.head.applyTransform(matrices);
@@ -316,6 +316,6 @@ public abstract class EquipmentRendererMixin {
             }
         }
         matrices.pop();
-        ThatUtil.forbidTransforming = false;
+        WearThat.forbidTransforming = false;
     }
 }

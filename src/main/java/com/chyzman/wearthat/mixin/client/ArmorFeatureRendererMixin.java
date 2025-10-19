@@ -1,6 +1,6 @@
 package com.chyzman.wearthat.mixin.client;
 
-import com.chyzman.wearthat.ThatUtil;
+import com.chyzman.wearthat.WearThat;
 import com.chyzman.wearthat.pond.LivingEntityRenderStateDuck;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -214,6 +214,7 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         return armorModel;
     }
 
+    @SuppressWarnings("unchecked")
     @WrapOperation(
         method = "renderArmor",
         at = @At(
@@ -235,9 +236,9 @@ public abstract class ArmorFeatureRendererMixin<S extends BipedEntityRenderState
         Operation<Void> original,
         @Share("originalSlot") LocalRef<@Nullable EquipmentSlot> originalSlot
     ) {
-        ThatUtil.currentSlot = originalSlot.get();
-        model.resetTransforms();
+        WearThat.currentSlot = originalSlot.get();
+        if (WearThat.currentBipedModel == null) WearThat.currentBipedModel = (BipedEntityModel<BipedEntityRenderState>) this.getContextModel();
         original.call(instance, layerType, assetKey, model, object, itemStack, matrixStack, orderedRenderCommandQueue, light, outlineColor);
-        ThatUtil.currentSlot = null;
+        WearThat.currentSlot = null;
     }
 }

@@ -8,11 +8,9 @@ import net.minecraft.entity.EquipmentSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public class ThatUtil {
+public class WearThat {
     @Nullable
     public static EquipmentSlot currentSlot = null;
 

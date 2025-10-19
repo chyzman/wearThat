@@ -36,7 +36,7 @@ import java.util.Objects;
 @Environment(EnvType.CLIENT)
 @Mixin(
     value = PlayerEntityRenderer.class,
-    priority = -1000 // ensure we inject before armmersive because we will cancel submitModelPart
+    priority = -1000 // inject very early because we will cancel the submitModelPart
 )
 public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityRenderState, PlayerEntityModel> {
 
@@ -74,9 +74,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
             return;
         }
 
-        var tickDelta = client.getRenderTickCounter().getDynamicDeltaTicks();
-        var renderState = this.createRenderState();
-        this.updateRenderState(player, renderState, tickDelta);
+        var renderState = this.getAndUpdateRenderState(player, client.getRenderTickCounter().getDynamicDeltaTicks());
 
         var duck = (LivingEntityRenderStateDuck) renderState;
         instance.submitModelPart(
@@ -88,7 +86,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
             sprite,
             false,
             duck.wearThat$isEnchanted(),
-            duck.wearThat$getColor(),
+            Objects.requireNonNullElse(duck.wearThat$getColor(), -1),
             null,
             0
         );
